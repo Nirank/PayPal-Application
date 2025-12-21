@@ -50,33 +50,51 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         }
 
         try {
+//            String token = authHeader.substring(7);
+//            System.out.println("JWT token extracted from header: " + token);
+//
+//            // DEBUG: replace <your_expected_token_here> with actual token for debugging only
+//            String expectedToken = "<your_expected_token_here>";
+//            System.out.println("Comparing tokens:");
+//            System.out.println("Expected token: " + expectedToken);
+//            System.out.println("Extracted token: " + token);
+//
+//            Claims claims = JwtUtil.validateToken(token);
+//            System.out.println("JWT validated successfully. Claims subject: " + claims.getSubject());
+//
+//            // Add user email to headers for downstream services
+//            Long userId = claims.get("userId", Long.class);
+//            exchange.getRequest().mutate()
+//                    .header("X-User-Email", claims.getSubject())
+//                    .header("X-User-Id", userId.toString())
+//                    .header("X-User-Role", claims.get("role",String.class))
+//
+//                    .build();
+//            System.out.println("Added X-User-Email header to request: " + claims.getSubject());
+//
+//            return chain.filter(exchange)
+//                    .doOnSubscribe(s -> System.out.println("Proceeding with JWT authenticated request"))
+//                    .doOnSuccess(v -> System.out.println("Successfully passed JWT auth filter"))
+//                    .doOnError(e -> System.err.println("Error during authenticated filter chain: " + e.getMessage()));
+
             String token = authHeader.substring(7);
-            System.out.println("JWT token extracted from header: " + token);
-
-            // DEBUG: replace <your_expected_token_here> with actual token for debugging only
-            String expectedToken = "<your_expected_token_here>";
-            System.out.println("Comparing tokens:");
-            System.out.println("Expected token: " + expectedToken);
-            System.out.println("Extracted token: " + token);
-
             Claims claims = JwtUtil.validateToken(token);
-            System.out.println("JWT validated successfully. Claims subject: " + claims.getSubject());
 
-            // Add user email to headers for downstream services
-            Long userId = claims.get("userId", Long.class);
-            exchange.getRequest().mutate()
-                    .header("X-User-Email", claims.getSubject())
-                    .header("X-User-Id", userId.toString())
-                    .header("X-User-Role", claims.get("role",String.class))
+            System.out.println("Token validated. Claims:");
+            System.out.println("   userId=" + claims.get("userId"));
+            System.out.println("   email=" + claims.getSubject());
+            System.out.println("   role=" + claims.get("role"));
 
+            // Mutate request with claims
+            ServerWebExchange mutatedExchange = exchange.mutate()
+                    .request(exchange.getRequest().mutate()
+                            .header("X-User-Email", claims.getSubject())
+                            .header("X-User-Id", String.valueOf(claims.get("userId")))
+                            .header("X-User-Role", (String) claims.get("role"))
+                            .build())
                     .build();
-            System.out.println("Added X-User-Email header to request: " + claims.getSubject());
 
-            return chain.filter(exchange)
-                    .doOnSubscribe(s -> System.out.println("Proceeding with JWT authenticated request"))
-                    .doOnSuccess(v -> System.out.println("Successfully passed JWT auth filter"))
-                    .doOnError(e -> System.err.println("Error during authenticated filter chain: " + e.getMessage()));
-
+            return chain.filter(mutatedExchange);
         } catch (Exception e) {
             System.err.println("JWT validation failed: " + e.getMessage());
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
