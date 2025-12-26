@@ -1,108 +1,71 @@
-```markdown
-# PayPal Microservices Backend Application
+# PayPal Application – Microservices Backend
 
-A **PayPal-like backend system** built using **Spring Boot microservices**, designed to demonstrate real-world backend engineering concepts and **interview-ready system design**.
-
----
-
-## High-Level Architecture
-
-The system follows a **microservices architecture** with centralized access via an API Gateway.
-
-```
-
-## Tech Stack
-
-- Java 17  
-- Spring Boot 3.x  
-- Spring Cloud Gateway  
-- Spring Security  
-- JWT (JJWT)  
-- JPA / Hibernate  
-- Maven (Multi-module)  
-- Docker & Docker Compose  
-
----
-Client
-↓
-API Gateway
-↓
--
-
-## User | Wallet | Transaction | Reward | Notification
-
-```
+A **microservices-based backend system** that simulates core features of a PayPal-like payment platform.  
+The project is built using **Java and Spring Boot**, following real-world **distributed system design principles** such as API Gateway routing, service isolation, and centralized configuration.
 
 ---
 
-## Services Overview
+## 🧩 Project Overview
 
-| Service | Responsibility |
-|-------|----------------|
-| API Gateway | Routing, JWT validation, rate limiting |
-| User Service | User registration, login, roles |
-| Wallet Service | Wallet balance management |
-| Transaction Service | Money transfers & transactions |
-| Reward Service | Reward points calculation |
-| Notification Service | Asynchronous notifications |
+This application demonstrates how a modern payment platform can be designed using **independently deployable microservices**.  
+Each service is responsible for a specific business capability and communicates via REST APIs.
 
-Each service:
-- Runs independently
-- Owns its business logic
-- Can be scaled separately
+The system is designed for **scalability, maintainability, and clear separation of concerns**, making it suitable for learning and interview-level discussion on microservices architecture.
 
 ---
 
 
-## Security Design (JWT)
+## 🛠️ Tech Stack
 
-- Stateless authentication using JWT
-- API Gateway validates JWT for protected routes
-- Public routes (`/auth/**`) bypass authentication
-- JWT claims include:
-  - `sub` (email)
-  - `userId`
-  - `role`
-
----
-
-## API Gateway Responsibilities
-
-- Centralized routing
-- JWT authentication
-- Rate limiting
-- Single entry point for clients
-
-**Rate Limiting Strategy**
-- Authenticated requests → `userId`
-- Public requests → client IP
+- **Language:** Java  
+- **Framework:** Spring Boot  
+- **Architecture:** Microservices  
+- **API Communication:** REST  
+- **Containerization:** Docker & Docker Compose  
+- **Build Tool:** Maven  
+- **Configuration:** application.yml / application.properties  
 
 ---
 
-## Data & Transaction Design
+## 🏗️ Architecture
 
-- Each service owns its database schema
-- No cross-database joins
-- Designed for eventual consistency
-- Avoids distributed (2PC) transactions
+The project follows a **microservices architecture** with the following components:
+
+- **API Gateway**
+  - Acts as a single entry point for all client requests
+  - Handles request routing and cross-cutting concerns
+
+- **User Service**
+  - Manages user registration and authentication
+  - Stores user profile information
+
+- **Wallet Service**
+  - Maintains user wallet balances
+  - Handles credit and debit operations
+
+- **Transaction Service**
+  - Processes payment transactions
+  - Maintains transaction history
+
+- **Reward Service**
+  - Implements reward or loyalty point logic based on transactions
+
+- **Notification Service**
+  - Sends notifications related to user actions or transactions
+
+Each service runs independently and can be scaled separately.
 
 ---
 
-## Project Structure
+## 🚀 Key Features
 
-PayPal-Application/
-│
-├── api-gateway/
-├── user-service/
-├── wallet-service/
-├── transaction-service/
-├── reward-service/
-├── notification-service/
-│
-├── docker-compose.yml
-├── pom.xml
-└── README.md
+- Microservices-based system design
+- API Gateway pattern
+- Clear service-to-service responsibility boundaries
+- Dockerized environment for easy local setup
+- Real-world payment domain modeling
 
+---
 
 ## Engineering Highlights
 
@@ -112,7 +75,15 @@ PayPal-Application/
 * Service isolation and loose coupling
 * Production-aligned Spring Boot practices
 
----
+## ▶️ Running the Project
 
+### Prerequisites
+- Java 17+
+- Maven
+- Docker & Docker Compose
 
-
+### Steps
+```bash
+git clone https://github.com/Nirank/PayPal-Application.git
+cd PayPal-Application
+docker-compose up
