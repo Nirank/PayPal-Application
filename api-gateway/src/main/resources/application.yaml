@@ -10,14 +10,28 @@ spring:
 
   cloud:
     gateway:
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+#      default-filters:
+#        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       routes:
         # user micro service - NO rate limiting for auth endpoints
         - id: user-service
           uri: http://localhost:8081
           predicates:
-            - Path=/auth/**
+            - Path=/auth/**,/api/users/**
 
         # Transaction microservice - WITH rate limiting
         - id: transaction-service
@@ -74,110 +88,3 @@ spring:
   logging:
     level:
       org.springframework.cloud.gateway: DEBUG
-
-
-
-
-
-
-#server:
-#  port: 8080
-#
-#spring:
-#  application:
-#    name: api-gateway-service
-#
-#  cloud:
-#    gateway:
-#      default-filters:
-#        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-#      routes:
-#
-#        # User Auth (Signup/Login)
-#        - id: user-service
-#          uri: http://localhost:8081
-#          predicates:
-#            - Path=/auth/**
-#          filters:
-##            - StripPrefix=1
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 10 # this is how token are added back to rate limiter
-#                redis-rate-limiter.burstCapacity: 20 # max request token can hold
-#                redis-rate-limiter-requestedToken: 1
-#
-#
-#        # User Service (Get user info, etc.)
-#        - id: user-service
-#          uri: http://localhost:8081
-#          predicates:
-#            - Path=/api/users/**
-#          filters:
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 10 # this is how token are added back to rate limiter
-#                redis-rate-limiter.burstCapacity: 20 # max request token can hold
-#                redis-rate-limiter-requestedToken: 1
-#
-#        # Transaction Service
-#        - id: transaction-service
-#          uri: http://localhost:8082
-#          predicates:
-#            - Path=/api/transactions/**
-#          filters:
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 10 # this is how token are added back to rate limiter
-#                redis-rate-limiter.burstCapacity: 20 # max request token can hold
-#                redis-rate-limiter-requestedToken: 1
-#
-#        #Reward Service
-#        - id: reward-service
-#          uri: http://localhost:8085
-#          predicates:
-#            - Path=/api/rewards/**
-#          filters:
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 10 # this is how token are added back to rate limiter
-#                redis-rate-limiter.burstCapacity: 20 # max request token can hold
-#                redis-rate-limiter-requestedToken: 1
-#
-#        # Notification Service
-#        - id: notification-service
-#          uri: http://localhost:8084
-#          predicates:
-#            - Path=/api/notifications/**
-#          filters:
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 10 # this is how token are added back to rate limiter
-#                redis-rate-limiter.burstCapacity: 20 # max request token can hold
-#                redis-rate-limiter-requestedToken: 1
-#
-#        - id: wallet-service
-#          uri: http://localhost:8088
-#          predicates:
-#            - Path=/api/v1/wallet/**
-#          filters:
-#            - name: RequestRateLimiter
-#              args:
-#                redis-rate-limiter.replenishRate: 10 # this is how token are added back to rate limiter
-#                redis-rate-limiter.burstCapacity: 20 # max request token can hold
-#                redis-rate-limiter-requestedToken: 1
-#
-#    httpclient:
-#      max-initial-line-length: 4096
-#      max-header-size: 8192
-#    filters:
-#      - name: RequestSize
-#        args:
-#          maxSize: 1MB
-#
-#  jwt:
-#    secret: my-super-secret-key-that-you-never-share
-#
-#
-#logging:
-#  level:
-#    org.springframework.cloud.gateway: DEBUG

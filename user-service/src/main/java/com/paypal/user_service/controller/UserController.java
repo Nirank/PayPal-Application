@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users/")
+@RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
 
@@ -17,17 +17,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("save")
+    @PostMapping("/save")
     public ResponseEntity<User> createUser(@RequestBody User user){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 
-    @GetMapping("byId/{id}")
+    @GetMapping("/byId/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id){
-        return userService.getUserById(id).map(ResponseEntity :: ok).orElse(ResponseEntity.notFound().build());
+            return userService.getUserById(id).map(ResponseEntity :: ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("all")
+    @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
